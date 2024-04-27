@@ -22,6 +22,8 @@ class ConnectionManager:
 
 manager = ConnectionManager()
 
+messages = []
+
 
 @app.get("/")
 def read_root():
@@ -33,9 +35,14 @@ def read_root():
 @app.websocket("/ws")
 async def websocket_endpoint(websocket: WebSocket):
     await manager.connect(websocket)
+
+    for message in messages:
+        await websocket.send_text(message)
+
     try:
         while True:
             data = await websocket.receive_text()
+            messages.append(data)
             await manager.broadcast(data)
     except WebSocketDisconnect:
         manager.disconnect(websocket)
