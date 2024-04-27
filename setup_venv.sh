@@ -29,6 +29,3 @@ echo "Dependencies installed from requirements.txt."
 
 # Additional script operations
 echo "Setup complete. You can start your application."
-
-# Keep the terminal open
-read -p "Press [Enter] to exit..."
