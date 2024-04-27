@@ -82,7 +82,9 @@
 </form>
 
 <script>
-    const ws = new WebSocket("ws://localhost:8000/ws");
+    let scheme = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
+
+    const ws = new WebSocket(`${scheme}${window.location.host}/ws`);
 
     const form = document.getElementById('form');
     const username = document.getElementById('username');
