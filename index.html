@@ -1,123 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>Socket.IO chat</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MUTA.IO</title>
+    <script>
+        async function load() {
 
-    <style>
-        body {
-            margin: 0;
-            padding-bottom: 3rem;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
+            let login_session_token = localStorage.getItem('login_session_token');
 
-        #form {
-            background: rgba(0, 0, 0, 0.15);
-            padding: 0.25rem;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            display: flex;
-            height: 3rem;
-            box-sizing: border-box;
-            backdrop-filter: blur(10px);
-        }
+            if (login_session_token) {
+                const response = await fetch(`/validation?token=${login_session_token}`)
 
-        #username {
-            border: none;
-            padding: 0 1rem;
-            flex-grow: 1;
-            border-radius: 2rem;
-            margin: 0.25rem;
-        }
+                const validated = await response.json();
 
-        #username:focus {
-            outline: none;
-        }
+                if (validated) {
 
-        #content {
-            border: none;
-            padding: 0 1rem;
-            flex-grow: 1;
-            border-radius: 2rem;
-            margin: 0.25rem;
-        }
+                    await fetch("/client")
+                    window.location.href = '/client';
 
-        #content:focus {
-            outline: none;
-        }
-
-        #form > button {
-            background: #333;
-            border: none;
-            padding: 0 1rem;
-            margin: 0.25rem;
-            border-radius: 3px;
-            outline: none;
-            color: #fff;
-        }
-
-        #messages {
-            list-style-type: none;
-            margin: 0;
-            padding: 0;
-        }
-
-        #messages > li {
-            padding: 0.5rem 1rem;
-        }
-
-        #messages > li:nth-child(odd) {
-            background: #efefef;
-        }
-    </style>
-</head>
-<body>
-<ul id="messages"></ul>
-<form id="form" action="">
-    <label for="username"></label><input id="username" autocomplete="off" placeholder="Username"/>
-    <label for="content"></label><input id="content" autocomplete="off" placeholder="Content"/>
-    <button>Send</button>
-</form>
-
-<script>
-    let scheme = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
-
-    const ws = new WebSocket(`${scheme}${window.location.host}/ws`);
-
-    const form = document.getElementById('form');
-    const username = document.getElementById('username');
-    const content = document.getElementById('content');
-    const messages = document.getElementById('messages');
-
-    form.addEventListener('submit', (e) => {
-        e.preventDefault();
-        if (username.value && content.value) {
-
-            const payload = {
-                "username": username.value,
-                "content": content.value
+                    return
+                }
             }
 
-            ws.send(JSON.stringify(payload))
-
-            content.value = '';
+            await fetch("/login")
+            window.location.href = '/login';
         }
-    });
 
-    ws.onmessage = function (event) {
-        const payload = JSON.parse(event.data)
-
-        const item = document.createElement('li');
-
-        item.textContent = payload.username + ": " + payload.content;
-
-        messages.appendChild(item);
-        window.scrollTo(0, document.body.scrollHeight);
-    };
-
-</script>
-
+        window.onload = load;
+    </script>
+</head>
+<body>
 </body>
 </html>
